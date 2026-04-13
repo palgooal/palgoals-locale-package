@@ -1,0 +1,43 @@
+{
+    "name": "palgoals/locale-package",
+    "description": "A Laravel package for database-driven multilingual support with language switcher, translation management, and RTL/LTR auto-detection.",
+    "keywords": ["laravel", "locale", "translation", "multilingual", "rtl", "i18n", "language-switcher"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "PalGoals",
+            "email": "palgooal@gmail.com",
+            "homepage": "https://github.com/palgooal"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^10.0|^11.0|^12.0",
+        "illuminate/database": "^10.0|^11.0|^12.0",
+        "illuminate/http": "^10.0|^11.0|^12.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0|^9.0",
+        "phpunit/phpunit": "^10.0|^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Palgoals\\LocalePackage\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Palgoals\\LocalePackage\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Palgoals\\LocalePackage\\LocaleServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
