@@ -24,32 +24,30 @@ A Laravel package for **database-driven multilingual support** with language man
 
 ## Installation
 
-### 1. Install via Composer
+### Step 1 — Install via Composer
 
 ```bash
 composer require palgoals/locale-package
 ```
 
-### 2. Publish all package files
+### Step 2 — Run the installer
 
 ```bash
-php artisan vendor:publish --tag=palgoals-locale
+php artisan locale:install
 ```
 
-This will copy the following into your project:
+This single command will:
+- ✅ Publish all files (Models, Controllers, Middleware, Views, Routes, Config)
+- ✅ Run migrations (creates `languages` and `translation_values` tables)
 
-| Source | Destination |
-|---|---|
-| Models, Controllers, Middleware, Components, Helpers | `app/` |
-| Migrations | `database/migrations/` |
-| Seeders | `database/seeders/` |
-| Blade Views | `resources/views/` |
-| Routes | `routes/` |
-| Config | `config/palgoals-locale.php` |
+> **Optional:** Add `--seed` to seed default languages automatically:
+> ```bash
+> php artisan locale:install --seed
+> ```
 
-> You can publish individual groups using `--tag=palgoals-locale-app`, `--tag=palgoals-locale-migrations`, etc.
+### Step 3 — Register the Helper
 
-### 3. Register the Helpers in `composer.json`
+In your project's `composer.json`, add the helper to autoload:
 
 ```json
 "autoload": {
@@ -65,14 +63,7 @@ Then run:
 composer dump-autoload
 ```
 
-### 4. Register the Middleware
-
-**Laravel 10 and below** — in `app/Http/Kernel.php`:
-```php
-protected $middlewareAliases = [
-    'setLocale' => \App\Http\Middleware\SetLocale::class,
-];
-```
+### Step 4 — Register the Middleware
 
 **Laravel 11+** — in `bootstrap/app.php`:
 ```php
@@ -83,7 +74,14 @@ protected $middlewareAliases = [
 })
 ```
 
-### 5. Add Routes
+**Laravel 10 and below** — in `app/Http/Kernel.php`:
+```php
+protected $middlewareAliases = [
+    'setLocale' => \App\Http\Middleware\SetLocale::class,
+];
+```
+
+### Step 5 — Add Routes
 
 In `routes/web.php`:
 ```php
@@ -98,31 +96,15 @@ In your dashboard routes file (inside auth/admin group):
 require __DIR__ . '/lang_dashboard.php';
 ```
 
-### 6. Run Migrations
-
-```bash
-php artisan migrate
-```
-
-### 7. (Optional) Seed Default Languages
-
-```bash
-php artisan db:seed --class=LanguageSeeder
-```
-
-### 8. Share Variables with All Views
+### Step 6 — Share Variables with All Views
 
 In `app/Providers/AppServiceProvider.php` inside `boot()`:
 ```php
 view()->composer('*', function ($view) {
-    $currentLocale   = app()->getLocale();
-    $currentLanguage = \App\Models\Language::where('code', $currentLocale)->first();
-    $languages       = \App\Models\Language::where('is_active', true)->get();
-
     $view->with([
-        'currentLocale'   => $currentLocale,
-        'currentLanguage' => $currentLanguage,
-        'languages'       => $languages,
+        'currentLocale'   => app()->getLocale(),
+        'currentLanguage' => \App\Models\Language::where('code', app()->getLocale())->first(),
+        'languages'       => \App\Models\Language::where('is_active', true)->get(),
     ]);
 });
 ```
@@ -168,7 +150,7 @@ view()->composer('*', function ($view) {
 
 ## Configuration
 
-After publishing, edit `config/palgoals-locale.php`:
+After installation, edit `config/palgoals-locale.php`:
 
 ```php
 return [
@@ -203,7 +185,7 @@ The dashboard views (`resources/views/dashboard/lang/`) depend on your project's
 - `<x-dashboard-layout>` — your project's dashboard layout
 - `<x-form.input>` — your project's input component
 
-Edit these views after publishing to match your project's component names.
+Edit these views after installation to match your project's component names.
 
 ---
 
